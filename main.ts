@@ -1,4 +1,11 @@
-const heading1_regexp = /^(?<level>#+)\s+(?<content>\S+)$/;
+const heading_regexp = /^(?<level>#+)\s+(?<content>\S+)$/;
+
+// inline
+// const bold_regexp = /\*\*(?<content>\S+)\*\*/;
+// const italic_regexp = /\*\*(?<content>\S+)\*/;
+
+// multiline
+// const codeblock_regexp = //;
 
 type Node = {
   type: "TEXT" | "HEADING";
@@ -16,7 +23,7 @@ function parse(markdown: string): Node[] {
 
     if (line === "") continue;
 
-    const heading1 = line.match(heading1_regexp);
+    const heading1 = line.match(heading_regexp);
     if (heading1) {
       const level = heading1.groups?.level.length || 1;
       const content = heading1.groups?.content || "";
