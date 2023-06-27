@@ -3,18 +3,25 @@
 ```typescript
 if (import.meta.main) {
   const markdown = `
-    # Heading1
+    # Heading1 **bold**
 
-    text
+    text **strong Hello**
 
-    # Heading2
+    ## Heading2
 
-    text
+    text *italic Hello*
+
+    \`console.log("Hello, world!")\`
+
+    [Link](https://www.google.com)
     `;
+
   const result = convertMarkdownToHTML(markdown);
   console.log(result);
   /*
-  Output: <h1>Heading1</h1><p>text</p><h1>Heading2</h1><p>text</p>
+  Output: <h1>Heading1 <strong>bold</strong></h1>
+    text <strong>strong Hello</strong><h2>Heading2</h2>    
+    text <i>italic Hello</i><pre>console.log("Hello, world!")</pre><a href="https://www.google.com" target="_blank">Link</a>
   */
 }
 ```
