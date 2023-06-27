@@ -73,10 +73,7 @@ Deno.test(function multilineTest() {
     \`\`\`
     `,
     ),
-    `<h1>Heading1 <strong>bold</strong></h1>
-    text <strong>strong Hello</strong><h2>Heading2</h2>    text <i>italic Hello</i>console.log("Hello, world!")<code>console.log("Hello, world!")</code>
-
-    <pre class="lang-typescript"><code>    const s: string = "text";
+    `<h1>Heading1 <strong>bold</strong></h1>    text <strong>strong Hello</strong>    <br><h2>Heading2</h2>    text <i>italic Hello</i>    <br><code>console.log("Hello, world!")</code>    <br><a href="https://www.google.com" target="_blank">Link</a>    <br><pre class="lang-typescript"><code>    const s: string = "text";
     console.log(s);
     </code></pre>`,
   );

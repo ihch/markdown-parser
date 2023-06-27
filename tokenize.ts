@@ -94,6 +94,11 @@ export function tokenize(text: string): Token[] {
     let skipIndex = 0;
 
     if (currentChar === "#") {
+      if (vanillaText !== "") {
+        vanillaText.split('\n').forEach((text) => tokens.push(generateTextToken(text)));
+        vanillaText = "";
+      }
+
       const heading = text.trim().match(heading_regexp);
       if (heading) {
         tokens.push(generateHeadingToken(
@@ -104,7 +109,7 @@ export function tokenize(text: string): Token[] {
       }
     } else if (currentChar === "*") {
       if (vanillaText !== "") {
-        tokens.push(generateTextToken(vanillaText));
+        vanillaText.split('\n').forEach((text) => tokens.push(generateTextToken(text)));
         vanillaText = "";
       }
 
@@ -120,7 +125,7 @@ export function tokenize(text: string): Token[] {
       }
     } else if (currentChar === "`") {
       if (vanillaText !== "") {
-        tokens.push(generateTextToken(vanillaText));
+        vanillaText.split('\n').forEach((text) => tokens.push(generateTextToken(text)));
         vanillaText = "";
       }
 
@@ -144,7 +149,7 @@ export function tokenize(text: string): Token[] {
       }
     } else if (currentChar === "[") {
       if (vanillaText !== "") {
-        tokens.push(generateTextToken(vanillaText));
+        vanillaText.split('\n').forEach((text) => tokens.push(generateTextToken(text)));
         vanillaText = "";
       }
 
@@ -169,7 +174,7 @@ export function tokenize(text: string): Token[] {
   }
 
   if (vanillaText !== "") {
-    tokens.push(generateTextToken(vanillaText));
+    vanillaText.split('\n').forEach((text) => tokens.push(generateTextToken(text)));
     vanillaText = "";
   }
 

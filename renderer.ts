@@ -4,7 +4,8 @@ export function renderHTML(ast: Token[]): string {
   const html = ast.reduce(
     (prev, cur) => {
       if (cur.type === "TEXT") {
-        return prev + `${cur.content}`;
+        const suffix = cur.content.endsWith('  ') ? '<br>' : '';
+        return prev + `${cur.content}` + suffix;
       }
       if (cur.type === "STRONG") {
         return prev + `<strong>${cur.content}</strong>`;
