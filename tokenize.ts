@@ -1,6 +1,7 @@
 import {
-anchor_regexp,
+  anchor_regexp,
   code_regexp,
+  codeblock_regexp,
   heading_regexp,
   italic_regexp,
   strong_regexp,
@@ -12,7 +13,8 @@ export type Token =
   | ItalicToken
   | CodeToken
   | AnchorToken
-  | HeadingToken;
+  | HeadingToken
+  | CodeblockToken;
 
 type TextToken = {
   type: "TEXT";
@@ -38,12 +40,18 @@ type AnchorToken = {
   type: "ANCHOR";
   content: string;
   href: string;
-}
+};
 
 type HeadingToken = {
   type: "HEADING";
   level: number;
   children: Token[];
+};
+
+type CodeblockToken = {
+  type: "CODEBLOCK";
+  language: string;
+  content: string;
 };
 
 function generateTextToken(content: string): TextToken {
@@ -68,6 +76,13 @@ function generateAnchorToken(content: string, href: string): AnchorToken {
 
 function generateHeadingToken(level: number, children: Token[]): HeadingToken {
   return { type: "HEADING", level, children };
+}
+
+function generateCodeblockToken(
+  language: string,
+  content: string,
+): CodeblockToken {
+  return { type: "CODEBLOCK", language, content };
 }
 
 export function tokenize(text: string): Token[] {
@@ -104,15 +119,43 @@ export function tokenize(text: string): Token[] {
         skipIndex += italic[0].length;
       }
     } else if (currentChar === "`") {
-      const code = text.match(code_regexp);
-      if (code) {
-        tokens.push(generateCodeToken(code.groups?.content || ""));
-        skipIndex = code[0].length;
+      if (vanillaText !== "") {
+        tokens.push(generateTextToken(vanillaText));
+        vanillaText = "";
+      }
+
+      if (text[index + 1] === "`" && text[index + 2] === "`") {
+        const codeblock = text.match(codeblock_regexp);
+        if (codeblock) {
+          tokens.push(
+            generateCodeblockToken(
+              codeblock.groups?.language || "",
+              codeblock.groups?.content || "",
+            ),
+          );
+          skipIndex = codeblock.input?.length || codeblock[0].length;
+        }
+      } else {
+        const code = text.match(code_regexp);
+        if (code) {
+          tokens.push(generateCodeToken(code.groups?.content || ""));
+          skipIndex = code[0].length;
+        }
       }
     } else if (currentChar === "[") {
+      if (vanillaText !== "") {
+        tokens.push(generateTextToken(vanillaText));
+        vanillaText = "";
+      }
+
       const anchor = text.match(anchor_regexp);
       if (anchor) {
-        tokens.push(generateAnchorToken(anchor.groups?.content || '', anchor.groups?.href || ''));
+        tokens.push(
+          generateAnchorToken(
+            anchor.groups?.content || "",
+            anchor.groups?.href || "",
+          ),
+        );
         skipIndex = anchor[0].length;
       }
     } else {

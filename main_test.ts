@@ -26,7 +26,7 @@ Deno.test(function italicTest() {
 Deno.test(function codeTest() {
   assertEquals(
     convertMarkdownToHTML("`console.log('Hello, world!')`"),
-    "<pre>console.log('Hello, world!')</pre>",
+    "<code>console.log('Hello, world!')</code>",
   );
 });
 
@@ -34,6 +34,20 @@ Deno.test(function anchorTest() {
   assertEquals(
     convertMarkdownToHTML("[Link](https://www.google.com)"),
     '<a href="https://www.google.com" target="_blank">Link</a>',
+  );
+});
+
+Deno.test(function codeblockTest() {
+  assertEquals(
+    convertMarkdownToHTML(
+      `\`\`\`typescript
+    const s: string = "text";
+    console.log(s);
+    \`\`\``,
+    ),
+    `<pre class="lang-typescript"><code>    const s: string = "text";
+    console.log(s);
+    </code></pre>`,
   );
 });
 
@@ -49,10 +63,21 @@ Deno.test(function multilineTest() {
 
     text *italic Hello*
 
-    \`console.log("Hello, world!")\``,
+    \`console.log("Hello, world!")\`
+
+    [Link](https://www.google.com)
+
+    \`\`\`typescript
+    const s: string = "text";
+    console.log(s);
+    \`\`\`
+    `,
     ),
     `<h1>Heading1 <strong>bold</strong></h1>
-    text <strong>strong Hello</strong><h2>Heading2</h2>    
-    text <i>italic Hello</i><pre>console.log("Hello, world!")</pre>    `,
+    text <strong>strong Hello</strong><h2>Heading2</h2>    text <i>italic Hello</i>console.log("Hello, world!")<code>console.log("Hello, world!")</code>
+
+    <pre class="lang-typescript"><code>    const s: string = "text";
+    console.log(s);
+    </code></pre>`,
   );
 });

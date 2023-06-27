@@ -25,7 +25,13 @@ if (import.meta.main) {
     \`console.log("Hello, world!")\`
 
     [Link](https://www.google.com)
+
+    \`\`\`typescript
+    const s: string = "text";
+    console.log(s);
+    \`\`\`
     `;
+
   const result = convertMarkdownToHTML(markdown);
   console.log(result);
 }
