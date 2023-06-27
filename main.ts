@@ -1,50 +1,124 @@
-const heading_regexp = /^(?<level>#+)\s+(?<content>\S+)$/;
+const heading_regexp = /^(?<level>#+)\s+(?<content>.+)/;
 
 // inline
-// const bold_regexp = /\*\*(?<content>\S+)\*\*/;
-// const italic_regexp = /\*\*(?<content>\S+)\*/;
+const strong_regexp = /\s\*\*(?<content>.*)\*\*\s?/;
+const italic_regexp = /\s\*(?<content>.*)\*\s?/;
 
 // multiline
 // const codeblock_regexp = //;
 
-type Node = {
-  type: "TEXT" | "HEADING";
-  text: string;
-  tag: string;
-  node: Node[] | null;
+type Token = TextToken | StrongToken | ItalicToken | HeadingToken;
+
+type TextToken = {
+  type: "TEXT";
+  content: string;
 };
 
-function parse(markdown: string): Node[] {
-  const markdownRoots = markdown.split("\n");
-  const ast: Node[] = [];
+type StrongToken = {
+  type: "STRONG";
+  content: string;
+};
 
-  for (let i = 0; i < markdownRoots.length; i++) {
-    const line = markdownRoots[i].trim();
+type ItalicToken = {
+  type: "ITALIC";
+  content: string;
+};
 
-    if (line === "") continue;
+type HeadingToken = {
+  type: "HEADING";
+  level: number;
+  children: Token[];
+};
 
-    const heading1 = line.match(heading_regexp);
-    if (heading1) {
-      const level = heading1.groups?.level.length || 1;
-      const content = heading1.groups?.content || "";
-      ast.push({
-        type: "HEADING",
-        text: content,
-        tag: `h${level}`,
-        node: null,
-      });
+function generateTextToken(content: string): TextToken {
+  return { type: "TEXT", content };
+}
+
+function generateStrongToken(content: string): StrongToken {
+  return { type: "STRONG", content };
+}
+
+function generateItalicToken(content: string): ItalicToken {
+  return { type: "ITALIC", content };
+}
+
+function generateHeadingToken(level: number, children: Token[]): HeadingToken {
+  return { type: "HEADING", level, children };
+}
+
+function tokenize(text: string): Token[] {
+  const tokens: Token[] = [];
+  let vanillaText = "";
+
+  for (let index = 0; index < text.length; index++) {
+    const currentChar = text[index];
+    let skipIndex = 0;
+
+    if (currentChar === "#") {
+      const heading = text.trim().match(heading_regexp);
+      if (heading) {
+        tokens.push(generateHeadingToken(
+          heading.groups?.level.length || 1,
+          tokenize(heading.groups?.content || ""),
+        ));
+        skipIndex += heading[0].length;
+      }
+    } else if (currentChar === "*") {
+      if (vanillaText !== "") {
+        tokens.push(generateTextToken(vanillaText));
+        vanillaText = "";
+      }
+
+      const strong = text.match(strong_regexp);
+      const italic = text.match(italic_regexp);
+
+      if (strong) {
+        tokens.push(generateStrongToken(strong.groups?.content || ""));
+        skipIndex += strong[0].length;
+      } else if (italic) {
+        tokens.push(generateItalicToken(italic.groups?.content || ""));
+        skipIndex += italic[0].length;
+      }
     } else {
-      ast.push({ type: "TEXT", text: line, tag: `p`, node: null });
+      vanillaText += currentChar;
+    }
+
+    if (skipIndex) {
+      text = text.slice(index + skipIndex);
+      index = 0;
     }
   }
+
+  if (vanillaText !== "") {
+    tokens.push(generateTextToken(vanillaText));
+    vanillaText = "";
+  }
+
+  return tokens;
+}
+
+function parse(markdown: string): Token[] {
+  const ast = tokenize(markdown);
 
   return ast;
 }
 
-function renderHTML(ast: Node[]): string {
+function renderHTML(ast: Token[]): string {
   const html = ast.reduce(
     (prev, cur) => {
-      return prev + `<${cur.tag}>${cur.text}</${cur.tag}>`;
+      if (cur.type === 'TEXT') {
+        return prev + `${cur.content}`;
+      }
+      if (cur.type === 'STRONG') {
+        return prev + `<strong>${cur.content}</strong>`;
+      }
+      if (cur.type === 'ITALIC') {
+        return prev + `<i>${cur.content}</i>`;
+      }
+      if (cur.type === 'HEADING') {
+        return prev + `<h${cur.level}>${renderHTML(cur.children)}</h${cur.level}>`;
+      }
+      return prev;
     },
     "",
   );
@@ -59,13 +133,13 @@ export function convertMarkdownToHTML(markdown: string): string {
 // Learn more at https://deno.land/manual/examples/module_metadata#concepts
 if (import.meta.main) {
   const markdown = `
-    # Heading1
+    # Heading1 **bold**
 
-    text
+    text **strong Hello**
 
-    # Heading2
+    ## Heading2
 
-    text
+    text *italic Hello*
     `;
   const result = convertMarkdownToHTML(markdown);
   console.log(result);
