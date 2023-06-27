@@ -1,4 +1,5 @@
 import {
+anchor_regexp,
   code_regexp,
   heading_regexp,
   italic_regexp,
@@ -10,6 +11,7 @@ export type Token =
   | StrongToken
   | ItalicToken
   | CodeToken
+  | AnchorToken
   | HeadingToken;
 
 type TextToken = {
@@ -32,6 +34,12 @@ type CodeToken = {
   content: string;
 };
 
+type AnchorToken = {
+  type: "ANCHOR";
+  content: string;
+  href: string;
+}
+
 type HeadingToken = {
   type: "HEADING";
   level: number;
@@ -52,6 +60,10 @@ function generateItalicToken(content: string): ItalicToken {
 
 function generateCodeToken(content: string): CodeToken {
   return { type: "CODE", content };
+}
+
+function generateAnchorToken(content: string, href: string): AnchorToken {
+  return { type: "ANCHOR", content, href };
 }
 
 function generateHeadingToken(level: number, children: Token[]): HeadingToken {
@@ -96,6 +108,12 @@ export function tokenize(text: string): Token[] {
       if (code) {
         tokens.push(generateCodeToken(code.groups?.content || ""));
         skipIndex = code[0].length;
+      }
+    } else if (currentChar === "[") {
+      const anchor = text.match(anchor_regexp);
+      if (anchor) {
+        tokens.push(generateAnchorToken(anchor.groups?.content || '', anchor.groups?.href || ''));
+        skipIndex = anchor[0].length;
       }
     } else {
       vanillaText += currentChar;

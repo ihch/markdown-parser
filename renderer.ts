@@ -15,6 +15,9 @@ export function renderHTML(ast: Token[]): string {
       if (cur.type === "CODE") {
         return prev + `<pre>${cur.content}</pre>`;
       }
+      if (cur.type === "ANCHOR") {
+        return prev + `<a href="${cur.href}" target="_blank">${cur.content}</a>`
+      }
       if (cur.type === "HEADING") {
         return prev +
           `<h${cur.level}>${renderHTML(cur.children)}</h${cur.level}>`;

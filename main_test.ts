@@ -30,10 +30,17 @@ Deno.test(function codeTest() {
   );
 });
 
+Deno.test(function anchorTest() {
+  assertEquals(
+    convertMarkdownToHTML("[Link](https://www.google.com)"),
+    '<a href="https://www.google.com" target="_blank">Link</a>',
+  );
+});
+
 Deno.test(function multilineTest() {
   assertEquals(
     convertMarkdownToHTML(
-    `
+      `
     # Heading1 **bold**
 
     text **strong Hello**
@@ -42,7 +49,7 @@ Deno.test(function multilineTest() {
 
     text *italic Hello*
 
-    \`console.log("Hello, world!")\``
+    \`console.log("Hello, world!")\``,
     ),
     `<h1>Heading1 <strong>bold</strong></h1>
     text <strong>strong Hello</strong><h2>Heading2</h2>    

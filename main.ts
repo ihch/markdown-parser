@@ -23,6 +23,8 @@ if (import.meta.main) {
     text *italic Hello*
 
     \`console.log("Hello, world!")\`
+
+    [Link](https://www.google.com)
     `;
   const result = convertMarkdownToHTML(markdown);
   console.log(result);
