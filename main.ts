@@ -21,6 +21,8 @@ if (import.meta.main) {
     ## Heading2
 
     text *italic Hello*
+
+    \`console.log("Hello, world!")\`
     `;
   const result = convertMarkdownToHTML(markdown);
   console.log(result);

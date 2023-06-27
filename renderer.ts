@@ -12,6 +12,9 @@ export function renderHTML(ast: Token[]): string {
       if (cur.type === "ITALIC") {
         return prev + `<i>${cur.content}</i>`;
       }
+      if (cur.type === "CODE") {
+        return prev + `<pre>${cur.content}</pre>`;
+      }
       if (cur.type === "HEADING") {
         return prev +
           `<h${cur.level}>${renderHTML(cur.children)}</h${cur.level}>`;

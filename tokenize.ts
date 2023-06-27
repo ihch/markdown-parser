@@ -1,6 +1,16 @@
-import { heading_regexp, italic_regexp, strong_regexp } from "./regexp.ts";
+import {
+  code_regexp,
+  heading_regexp,
+  italic_regexp,
+  strong_regexp,
+} from "./regexp.ts";
 
-export type Token = TextToken | StrongToken | ItalicToken | HeadingToken;
+export type Token =
+  | TextToken
+  | StrongToken
+  | ItalicToken
+  | CodeToken
+  | HeadingToken;
 
 type TextToken = {
   type: "TEXT";
@@ -14,6 +24,11 @@ type StrongToken = {
 
 type ItalicToken = {
   type: "ITALIC";
+  content: string;
+};
+
+type CodeToken = {
+  type: "CODE";
   content: string;
 };
 
@@ -33,6 +48,10 @@ function generateStrongToken(content: string): StrongToken {
 
 function generateItalicToken(content: string): ItalicToken {
   return { type: "ITALIC", content };
+}
+
+function generateCodeToken(content: string): CodeToken {
+  return { type: "CODE", content };
 }
 
 function generateHeadingToken(level: number, children: Token[]): HeadingToken {
@@ -71,6 +90,12 @@ export function tokenize(text: string): Token[] {
       } else if (italic) {
         tokens.push(generateItalicToken(italic.groups?.content || ""));
         skipIndex += italic[0].length;
+      }
+    } else if (currentChar === "`") {
+      const code = text.match(code_regexp);
+      if (code) {
+        tokens.push(generateCodeToken(code.groups?.content || ""));
+        skipIndex = code[0].length;
       }
     } else {
       vanillaText += currentChar;
