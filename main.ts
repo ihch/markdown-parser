@@ -1,5 +1,6 @@
 import { renderHTML } from "./renderer.ts";
 import { Token, tokenize } from "./tokenize.ts";
+import { formatHTML } from "./formatter.ts";
 
 function parse(markdown: string): Token[] {
   const ast = tokenize(markdown);
@@ -32,6 +33,6 @@ if (import.meta.main) {
     \`\`\`
     `;
 
-  const result = convertMarkdownToHTML(markdown);
-  console.log(result);
+  const html = convertMarkdownToHTML(markdown);
+  const formattedHTML = await formatHTML(html);
 }
