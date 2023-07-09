@@ -1,5 +1,6 @@
 import { renderHTML } from "./renderer.ts";
 import { Token, tokenize } from "./tokenize.ts";
+import { diff } from "./diff.ts";
 import { formatHTML } from "./formatter.ts";
 
 function parse(markdown: string): Token[] {
@@ -35,4 +36,7 @@ if (import.meta.main) {
 
   const html = convertMarkdownToHTML(markdown);
   const formattedHTML = await formatHTML(html);
+
+  const diffResult = await diff(html, formattedHTML);
+  console.log(diffResult);
 }
