@@ -95,7 +95,9 @@ export function tokenize(text: string): Token[] {
 
     if (currentChar === "#") {
       if (vanillaText !== "") {
-        vanillaText.split('\n').forEach((text) => tokens.push(generateTextToken(text)));
+        vanillaText.split("\n").forEach((text) =>
+          tokens.push(generateTextToken(text))
+        );
         vanillaText = "";
       }
 
@@ -109,7 +111,9 @@ export function tokenize(text: string): Token[] {
       }
     } else if (currentChar === "*") {
       if (vanillaText !== "") {
-        vanillaText.split('\n').forEach((text) => tokens.push(generateTextToken(text)));
+        vanillaText.split("\n").forEach((text) =>
+          tokens.push(generateTextToken(text))
+        );
         vanillaText = "";
       }
 
@@ -125,7 +129,9 @@ export function tokenize(text: string): Token[] {
       }
     } else if (currentChar === "`") {
       if (vanillaText !== "") {
-        vanillaText.split('\n').forEach((text) => tokens.push(generateTextToken(text)));
+        vanillaText.split("\n").forEach((text) =>
+          tokens.push(generateTextToken(text))
+        );
         vanillaText = "";
       }
 
@@ -149,7 +155,9 @@ export function tokenize(text: string): Token[] {
       }
     } else if (currentChar === "[") {
       if (vanillaText !== "") {
-        vanillaText.split('\n').forEach((text) => tokens.push(generateTextToken(text)));
+        vanillaText.split("\n").forEach((text) =>
+          tokens.push(generateTextToken(text))
+        );
         vanillaText = "";
       }
 
@@ -174,7 +182,9 @@ export function tokenize(text: string): Token[] {
   }
 
   if (vanillaText !== "") {
-    vanillaText.split('\n').forEach((text) => tokens.push(generateTextToken(text)));
+    vanillaText.split("\n").forEach((text) =>
+      tokens.push(generateTextToken(text))
+    );
     vanillaText = "";
   }
 

@@ -24,9 +24,16 @@ if (import.meta.main) {
 
     text *italic Hello*
 
+    hogehoge  
+
+
+    hogehoge
+
     \`console.log("Hello, world!")\`
 
     [Link](https://www.google.com)
+
+    <img src="https://pbs.twimg.com/media/FzihpskaUAAeAjw?format=jpg&name=small" />
 
     \`\`\`typescript
     const s: string = "text";
