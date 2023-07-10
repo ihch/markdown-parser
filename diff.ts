@@ -1,4 +1,4 @@
-import { join } from "https://deno.land/std@0.193.0/path/mod.ts";
+import { join } from "std/path";
 
 const DENO_MARKDOWN_PARSER_PREFIX = "deno-mp-";
 
